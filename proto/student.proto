@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "../proto";
+
+message Student {
+  string name = 1;
+  int64 age = 2;
+  string gender = 3;
+  int32  number = 4;
+}
+
+service SaveStudentDataService{
+  rpc SaveStudentData (Student) returns (saveResponse) {}
+}
+
+
+message saveResponse {
+  bool success = 1;
+}
