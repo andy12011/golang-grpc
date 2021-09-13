@@ -22,14 +22,14 @@ func Client() {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewSaveStudentDataServiceClient(conn)
+	c := pb.NewCalculatorServiceClient(conn)
 
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-    defer cancel()
-	r, err := c.SaveStudentData(ctx, &pb.Student{Name:"Abel",Age: 25,Gender:  "male",Number:  123})
-    if err != nil {
-        log.Fatalf("Could not get nonce: %v", err)
-    }
+	defer cancel()
+	r, err := c.Sum(ctx, &pb.CalculatorRequest{A: 100, B: 200})
+	if err != nil {
+		log.Fatalf("Could not get nonce: %v", err)
+	}
 
-    fmt.Println("Response:", r.GetSuccess())
+	fmt.Println("Response:", r.GetResult())
 }

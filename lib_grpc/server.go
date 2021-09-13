@@ -1,33 +1,41 @@
 package lib_grpc
 
 import (
+	"context"
 	pb "golang-gRPC/proto"
-	"google.golang.org/grpc"
 	"log"
 	"net"
+
+	"google.golang.org/grpc"
 )
 
 const (
 	port = ":8787"
 )
 
-type server struct {
-	pb.UnimplementedSaveStudentDataServiceServer
+type Server struct {
+	pb.CalculatorServiceServer
 }
 
-func Server() {
-	// Create gRPC Server
-
+func RunServer() {
 	lis, err := net.Listen("tcp", port)
+
 	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
+		log.Fatalf("failed to listen: %v \n", err)
 	}
-	s := grpc.NewServer()
-	log.Println("gRPC server is running.")
 
-	pb.RegisterSaveStudentDataServiceServer(s, &server{})
+	grpcServer := grpc.NewServer()
+	pb.RegisterCalculatorServiceServer(grpcServer, &Server{})
 
-	if err := s.Serve(lis); err != nil {
-		log.Fatalf("failed to serve: %v", err)
+	if err := grpcServer.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v \n", err)
 	}
+}
+
+func (s *Server) Sum(_ context.Context, c *pb.CalculatorRequest) (*pb.CalculatorResponse, error) {
+
+	resp := &pb.CalculatorResponse{}
+	resp.Result = c.A + c.B
+
+	return resp, nil
 }
